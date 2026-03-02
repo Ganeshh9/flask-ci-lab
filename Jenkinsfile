@@ -37,5 +37,13 @@ pipeline {
 			}	
 		}
 
+		stage('Stop application') {
+			steps {
+				sh '''
+				pkill -f app.py || true
+				'''
+			}
+		}
+
 	}
 }

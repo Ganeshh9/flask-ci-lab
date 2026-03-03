@@ -15,7 +15,7 @@ pipeline {
 				steps {
 					sh '''
 					docker rm -f flask-container || true
-					docker run -d -p 5000:5000 --name flask-container flask-app:${BUILD_NUMBER|
+					docker run -d -p 5000:5000 --name flask-container flask-app:${BUILD_NUMBER}
 				    '''
 				}
 			}

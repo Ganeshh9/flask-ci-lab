@@ -8,15 +8,15 @@ pipeline {
 			}
 			stage('Build docker image') {
 				steps {
-					sh 'docker build -t flask-app:${BUILD_NUMBER} .'
+					sh "docker build -t flask-app:${BUILD_NUMBER} ."
 				}
 			}	
 			stage('Run Container') {
 				steps {
-					sh '''
+					sh """
 					docker rm -f flask-container || true
 					docker run -d -p 5000:5000 --name flask-container flask-app:${BUILD_NUMBER}
-				    '''
+				    """
 				}
 			}
 			stage('Health Check') {

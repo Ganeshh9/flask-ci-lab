@@ -1,51 +1,35 @@
 pipeline {
 	agent any
-	
-	stages {
-		stage('Cleanup') {
-			steps {
-				sh '''
-				pkill -f app.py || true
-				'''
+		stages {
+			stage('Checkout code') {
+				steps {
+					checkout scm
+				}
 			}
-		}
-		
-		stage('Setup Virtual Environment') {
-			steps {
-				sh '''
-				python3 -m venv venv
-				source venv/bin/activate
-				pip install -r requirements.txt
-				'''
-			}
-				  
-		}
-		
-		stage('Start Application') {
-			steps {
-				sh '''
-				source venv/bin/activate
-				python app.py &
-				sleep 5
-				'''
-			}
-		}
-
-		stage('Health Check') {
-			steps {
-				sh '''
-				curl http://localhost:5000/health
-				'''
+			stage('Build docker image') {
+				steps {
+					sh 'docker build -t flask-app:${BUILD_NUMBER| .'
+				}
 			}	
+			stage('Run Container') {
+				steps {
+					sh '''
+					docker rm -f flask-container || true
+					docker run -d -p 5000:5000 --name flask-container flask-app:${BUILD_NUMBER|
+				    '''
+				}
+			}
+			stage('Health Check') {
+				steps {
+					sh 'sleep 5'
+					sh 'curl -f http://localhost:5000/health'
+				}
+			}		
 		}
 
-		stage('Stop application') {
-			steps {
-				sh '''
-				pkill -f app.py || true
-				'''
+		post {
+			always {
+				sh 'docker rm -f flask-container || true'
 			}
 		}
-
-	}
-}
+} 	

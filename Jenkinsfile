@@ -7,8 +7,8 @@ pipeline {
 				}
 			}
 			stage('Build docker image') {
-				steps {
-					sh "docker build -t flask-app:${BUILD_NUMBER} ."
+				steps 	{
+					sh "docker build -t flask-app:${BUILD_NUMBER} .	"
 				}
 			}	
 			stage('Run Container') {
